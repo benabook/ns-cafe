@@ -9,10 +9,12 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Shield } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const MenuPage: React.FC = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const isMobile = useIsMobile();
   
   const categories = [
     { id: 'all', name: 'All' },
@@ -71,13 +73,13 @@ const MenuPage: React.FC = () => {
         
         <Tabs defaultValue="all" className="w-full mb-10">
           <div className="flex justify-center overflow-x-auto pb-2">
-            <TabsList className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8">
+            <TabsList className={isMobile ? "flex flex-nowrap overflow-x-auto gap-1 p-1 bg-muted/80 w-full max-w-full" : "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8"}>
               {categories.map(category => (
                 <TabsTrigger 
                   key={category.id} 
                   value={category.id}
                   onClick={() => setSelectedCategory(category.id)}
-                  className="px-3 whitespace-nowrap"
+                  className={isMobile ? "flex-shrink-0 text-xs px-2 py-1 whitespace-nowrap" : "px-3 whitespace-nowrap"}
                 >
                   {category.name}
                 </TabsTrigger>
