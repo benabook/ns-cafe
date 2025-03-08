@@ -4,9 +4,11 @@ import type {
   ToastActionElement,
   ToastProps,
 } from "@/components/ui/toast"
+import { useIsMobile } from "./use-mobile"
 
 const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 1000000
+const TOAST_REMOVE_DELAY = 5000 // Reduced from 1000000 to 5000ms (5 seconds)
+const MOBILE_TOAST_REMOVE_DELAY = 3000 // Even shorter for mobile (3 seconds)
 
 type ToasterToast = ToastProps & {
   id: string
@@ -55,10 +57,12 @@ interface State {
 
 const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
 
-const addToRemoveQueue = (toastId: string) => {
+const addToRemoveQueue = (toastId: string, isMobile: boolean = false) => {
   if (toastTimeouts.has(toastId)) {
     return
   }
+
+  const delay = isMobile ? MOBILE_TOAST_REMOVE_DELAY : TOAST_REMOVE_DELAY
 
   const timeout = setTimeout(() => {
     toastTimeouts.delete(toastId)
@@ -66,7 +70,7 @@ const addToRemoveQueue = (toastId: string) => {
       type: "REMOVE_TOAST",
       toastId: toastId,
     })
-  }, TOAST_REMOVE_DELAY)
+  }, delay)
 
   toastTimeouts.set(toastId, timeout)
 }
@@ -141,6 +145,7 @@ type Toast = Omit<ToasterToast, "id">
 
 function toast({ ...props }: Toast) {
   const id = genId()
+  const isMobile = window.innerWidth < 768 // Simple check for mobile
 
   const update = (props: ToasterToast) =>
     dispatch({
@@ -160,6 +165,13 @@ function toast({ ...props }: Toast) {
       },
     },
   })
+
+  // Auto-dismiss toast sooner on mobile
+  if (isMobile) {
+    setTimeout(() => {
+      dismiss();
+    }, MOBILE_TOAST_REMOVE_DELAY);
+  }
 
   return {
     id: id,
