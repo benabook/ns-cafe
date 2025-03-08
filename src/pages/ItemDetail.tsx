@@ -3,28 +3,23 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { getMenuItemById } from '@/data/menuData';
-import { useCart } from '@/context/CartContext';
-import { v4 as uuidv4 } from 'uuid';
-import { Option, CartItem } from '@/types';
 import AnimatedPage from '@/components/ui/AnimatedPage';
-import CustomButton from '@/components/ui/CustomButton';
-import { Card, CardContent } from '@/components/ui/card';
+import { ChevronLeft, Minus, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ChevronLeft, Minus, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { toast } from 'sonner';
 
 const ItemDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { addToCart } = useCart();
-  
   const menuItem = getMenuItemById(id || '');
   
   const [quantity, setQuantity] = useState(1);
-  const [selectedOption, setSelectedOption] = useState<Option | undefined>(
-    menuItem?.options?.[0]
+  const [selectedOption, setSelectedOption] = useState(
+    menuItem?.options ? menuItem.options[0] : undefined
   );
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -40,21 +35,6 @@ const ItemDetail: React.FC = () => {
     );
   }
   
-  const handleAddToCart = () => {
-    const cartItem: CartItem = {
-      id: uuidv4(),
-      menuItemId: menuItem.id,
-      name: menuItem.name,
-      price: menuItem.price + (selectedOption?.price || 0),
-      quantity,
-      selectedOption,
-      specialInstructions: specialInstructions.trim() || undefined,
-    };
-    
-    addToCart(cartItem);
-    navigate('/');
-  };
-  
   const decrementQuantity = () => {
     if (quantity > 1) {
       setQuantity(quantity - 1);
@@ -63,6 +43,20 @@ const ItemDetail: React.FC = () => {
   
   const incrementQuantity = () => {
     setQuantity(quantity + 1);
+  };
+  
+  const calculateTotalPrice = () => {
+    return (menuItem.price + (selectedOption?.price || 0)) * quantity;
+  };
+  
+  const handleAddToCart = () => {
+    toast.success(`${menuItem.name} added to cart`, {
+      description: `${quantity} × ${selectedOption ? `${menuItem.name} (${selectedOption.name})` : menuItem.name}`
+    });
+    
+    // In a real implementation, this would add the item to the cart
+    // For now, just navigate back to the menu
+    navigate('/');
   };
   
   return (
@@ -101,14 +95,25 @@ const ItemDetail: React.FC = () => {
                   transition={{ duration: 0.5, delay: 0.1 }}
                 >
                   <h1 className="text-3xl font-bold mb-2">{menuItem.name}</h1>
-                  <p className="text-xl font-medium text-primary mb-4">
-                    RM {menuItem.price.toFixed(2)}
-                  </p>
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="text-xl font-medium text-primary">
+                      RM {menuItem.price.toFixed(2)}
+                    </span>
+                    {menuItem.usdPrice && (
+                      <span className="text-sm text-muted-foreground">
+                        ≈ USD {menuItem.usdPrice.toFixed(1)}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <Separator className="my-4" />
                   
                   <div className="mt-2 mb-6">
                     <h3 className="text-sm font-medium mb-2">Ingredients:</h3>
                     <p className="text-muted-foreground text-sm">
-                      {menuItem.ingredients.join(', ')}
+                      {menuItem.ingredients.length > 0 
+                        ? menuItem.ingredients.join(', ')
+                        : 'No ingredients listed'}
                     </p>
                   </div>
                   
@@ -162,7 +167,7 @@ const ItemDetail: React.FC = () => {
                         <Minus className="h-3 w-3" />
                       </Button>
                       
-                      <div className="h-8 flex items-center justify-center border-y border-x-0 border-input px-4 text-sm">
+                      <div className="h-8 min-w-[3rem] flex items-center justify-center border-y border-x-0 border-input px-4 text-sm">
                         {quantity}
                       </div>
                       
@@ -178,14 +183,13 @@ const ItemDetail: React.FC = () => {
                   </div>
                   
                   <div className="mt-auto">
-                    <CustomButton 
-                      withShine 
+                    <Button 
                       size="lg" 
                       className="w-full"
                       onClick={handleAddToCart}
                     >
-                      Add to Cart • RM {((menuItem.price + (selectedOption?.price || 0)) * quantity).toFixed(2)}
-                    </CustomButton>
+                      Add to Cart • RM {calculateTotalPrice().toFixed(2)}
+                    </Button>
                   </div>
                 </motion.div>
               </div>
