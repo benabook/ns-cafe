@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AnimatedPage from '@/components/ui/AnimatedPage';
 import { Button } from '@/components/ui/button';
-import { Check, Clock, ShoppingBag } from 'lucide-react';
+import { Check, Clock, ShoppingBag, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface OrderConfirmationProps {}
@@ -11,7 +11,7 @@ interface OrderConfirmationProps {}
 const OrderConfirmation: React.FC<OrderConfirmationProps> = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { orderId, pickupTime, total } = location.state || {};
+  const { orderId, pickupTime, total, customerName } = location.state || {};
   
   // If no order data, redirect to home
   useEffect(() => {
@@ -45,6 +45,11 @@ const OrderConfirmation: React.FC<OrderConfirmationProps> = () => {
           </motion.div>
           
           <h1 className="text-3xl font-bold mb-2">Order Successful!</h1>
+          {customerName && (
+            <p className="text-lg mb-2">
+              Thank you, <span className="font-medium">{customerName}</span>!
+            </p>
+          )}
           <p className="text-muted-foreground mb-6">
             Your order has been received and is being prepared.
           </p>

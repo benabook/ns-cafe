@@ -4,12 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import AnimatedPage from '@/components/ui/AnimatedPage';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, ChevronLeft, Trash2, Plus, Minus } from 'lucide-react';
+import { ShoppingCart, ChevronLeft, Trash2, Plus, Minus, User, Phone, MessageSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { v4 as uuidv4 } from 'uuid';
+import { CustomerInfo, Order } from '@/types';
+import { toast } from 'sonner';
 
 const pickupTimes = [
   { id: 'time-10', label: '10 minutes', value: 10 },
@@ -22,17 +26,96 @@ const Cart: React.FC = () => {
   const navigate = useNavigate();
   const { cart, removeFromCart, updateQuantity, clearCart, getCartTotal } = useCart();
   const [selectedPickupTime, setSelectedPickupTime] = useState(pickupTimes[0].id);
+  const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
+    name: '',
+    discord: '',
+    phone: '',
+  });
+  const [formErrors, setFormErrors] = useState({
+    name: false,
+    phone: false,
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setCustomerInfo(prev => ({ ...prev, [name]: value }));
+    if (formErrors[name as keyof typeof formErrors]) {
+      setFormErrors(prev => ({ ...prev, [name]: false }));
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const errors = {
+      name: !customerInfo.name.trim(),
+      phone: !customerInfo.phone.trim()
+    };
+    
+    setFormErrors(errors);
+    return !errors.name && !errors.phone;
+  };
 
   const handleCheckout = () => {
+    if (!validateForm()) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
     const pickupTime = pickupTimes.find(time => time.id === selectedPickupTime)?.value || 10;
+    
+    const order: Order = {
+      id: uuidv4(),
+      items: [...cart],
+      status: 'pending',
+      total: getCartTotal(),
+      date: new Date(),
+      customerInfo,
+      paymentMethod: 'crypto',
+      paymentStatus: 'pending',
+      pickupTime
+    };
+
+    // Export order to CSV
+    exportOrderToCSV(order);
+
     navigate('/order-confirmation', { 
       state: { 
-        orderId: uuidv4(), 
+        orderId: order.id, 
         pickupTime,
-        total: getCartTotal()
+        total: getCartTotal(),
+        customerName: customerInfo.name
       } 
     });
+    
     clearCart();
+  };
+
+  const exportOrderToCSV = (order: Order) => {
+    try {
+      // Create CSV content
+      let csvContent = "Order ID,Date,Customer Name,Discord,Phone,Pickup Time,Total\n";
+      csvContent += `${order.id},${order.date.toISOString()},${order.customerInfo.name},${order.customerInfo.discord},${order.customerInfo.phone},${order.pickupTime} minutes,RM ${order.total.toFixed(2)}\n\n`;
+      
+      csvContent += "Item,Option,Quantity,Price,Total\n";
+      order.items.forEach(item => {
+        csvContent += `${item.name},${item.selectedOption?.name || 'N/A'},${item.quantity},RM ${item.price.toFixed(2)},RM ${(item.price * item.quantity).toFixed(2)}\n`;
+      });
+      
+      // Create blob and download link
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `order-${order.id.slice(0, 8)}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      console.log("Order exported to CSV");
+    } catch (error) {
+      console.error("Error exporting order to CSV:", error);
+      toast.error("Failed to export order data");
+    }
   };
 
   if (cart.length === 0) {
@@ -138,6 +221,57 @@ const Cart: React.FC = () => {
                 </motion.li>
               ))}
             </ul>
+          </div>
+
+          <div className="bg-card rounded-lg p-6 shadow-sm mb-6">
+            <h2 className="text-lg font-medium mb-4">Customer Information</h2>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="flex items-center gap-1">
+                  <User className="h-4 w-4" /> 
+                  Name <span className="text-destructive">*</span>
+                </Label>
+                <Input 
+                  id="name" 
+                  name="name" 
+                  value={customerInfo.name} 
+                  onChange={handleInputChange}
+                  className={formErrors.name ? "border-destructive" : ""}
+                  placeholder="Enter your name" 
+                />
+                {formErrors.name && <p className="text-xs text-destructive">Name is required</p>}
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="discord" className="flex items-center gap-1">
+                  <MessageSquare className="h-4 w-4" /> 
+                  Discord Username
+                </Label>
+                <Input 
+                  id="discord" 
+                  name="discord" 
+                  value={customerInfo.discord} 
+                  onChange={handleInputChange}
+                  placeholder="Enter your discord username (optional)" 
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="flex items-center gap-1">
+                  <Phone className="h-4 w-4" /> 
+                  Phone Number <span className="text-destructive">*</span>
+                </Label>
+                <Input 
+                  id="phone" 
+                  name="phone" 
+                  value={customerInfo.phone} 
+                  onChange={handleInputChange}
+                  className={formErrors.phone ? "border-destructive" : ""}
+                  placeholder="Enter your phone number" 
+                />
+                {formErrors.phone && <p className="text-xs text-destructive">Phone number is required</p>}
+              </div>
+            </div>
           </div>
 
           <div className="bg-card rounded-lg p-6 shadow-sm mb-6">

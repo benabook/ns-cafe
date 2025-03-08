@@ -1,3 +1,4 @@
+
 export interface Option {
   id: string;
   name: string;
@@ -27,6 +28,12 @@ export interface CartItem {
 
 export type OrderStatus = 'pending' | 'preparing' | 'ready' | 'completed' | 'cancelled';
 
+export interface CustomerInfo {
+  name: string;
+  discord: string;
+  phone: string;
+}
+
 export interface Order {
   id: string;
   items: CartItem[];
@@ -34,9 +41,10 @@ export interface Order {
   total: number;
   date: Date;
   tableNumber?: string;
-  customerName?: string;
+  customerInfo: CustomerInfo;
   paymentMethod: 'crypto';
   paymentStatus: 'pending' | 'paid' | 'failed';
+  pickupTime: number;
 }
 
 export interface CartContextType {
