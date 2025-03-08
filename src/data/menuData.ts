@@ -1,3 +1,4 @@
+
 import { MenuItem } from '@/types';
 
 // Images will be placeholders until real images are added
