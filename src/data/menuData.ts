@@ -1,4 +1,3 @@
-
 import { MenuItem } from '@/types';
 
 // Images will be placeholders until real images are added
@@ -128,7 +127,7 @@ export const menuItems: MenuItem[] = [
     price: 8,
     category: 'add-ons',
     ingredients: [],
-    image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc7c'
+    image: 'https://images.unsplash.com/photo-1586444248888-f9b241404b74'
   },
   {
     id: 'add-sunny-side-up',
@@ -284,8 +283,7 @@ export const menuItems: MenuItem[] = [
     usdPrice: 5.0,
     category: 'smoothies',
     ingredients: ['Peanut butter', 'banana', 'almond milk (unsweetened)', 'whey protein'],
-    image: 'https://images.unsplash.com/photo-1570696516188-ade861b84a49',
-    options: []
+    image: 'https://images.unsplash.com/photo-1570696516188-ade861b84a49'
   },
   {
     id: 'mixed-berries-smoothie',
@@ -294,8 +292,7 @@ export const menuItems: MenuItem[] = [
     usdPrice: 5.0,
     category: 'smoothies',
     ingredients: ['Blueberries', 'strawberries', 'almond milk (unsweetened)', 'whey protein'],
-    image: 'https://images.unsplash.com/photo-1553530666-2a2f9fc605f6',
-    options: []
+    image: 'https://images.unsplash.com/photo-1600718374662-0483d2b9da44'
   },
   
   // Cold-Pressed Juices
@@ -315,8 +312,7 @@ export const menuItems: MenuItem[] = [
     usdPrice: 3.2,
     category: 'cold-pressed',
     ingredients: ['Celery', 'cucumber', 'ginger', 'green apple', 'spinach'],
-    image: 'https://images.unsplash.com/photo-1638176066666-ffcdeee567c7',
-    options: []
+    image: 'https://images.unsplash.com/photo-1622597466433-5f1b2d0bd628'
   },
   {
     id: 'immune-booster-juice',

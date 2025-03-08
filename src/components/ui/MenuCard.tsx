@@ -17,12 +17,15 @@ const MenuCard: React.FC<MenuCardProps> = ({ item, className }) => {
 
   // Function to handle retry loading images
   const handleRetry = () => {
-    if (retryCount < 2) { // Max 2 retries
+    if (retryCount < 3) { // Max 3 retries
       setIsLoading(true);
       setHasError(false);
       setRetryCount(prevCount => prevCount + 1);
     }
   };
+
+  // Default fallback image if all retries fail
+  const fallbackImageUrl = "https://images.unsplash.com/photo-1495195134817-aeb325a55b65?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1776&q=80";
 
   return (
     <motion.div 
@@ -44,7 +47,7 @@ const MenuCard: React.FC<MenuCardProps> = ({ item, className }) => {
           {hasError && (
             <div className="absolute inset-0 bg-muted flex items-center justify-center flex-col">
               <span className="text-muted-foreground text-sm">Image unavailable</span>
-              {retryCount < 2 && (
+              {retryCount < 3 && (
                 <button 
                   onClick={(e) => {
                     e.preventDefault();
@@ -59,7 +62,7 @@ const MenuCard: React.FC<MenuCardProps> = ({ item, className }) => {
             </div>
           )}
           <img
-            src={item.image}
+            src={hasError && retryCount >= 3 ? fallbackImageUrl : item.image}
             alt={item.name}
             key={`${item.id}-${retryCount}`} // Force re-render on retry
             className={cn(
