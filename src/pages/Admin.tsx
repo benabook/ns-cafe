@@ -28,6 +28,7 @@ const Admin: React.FC = () => {
   const pendingOrders = orders.filter(order => order.status === 'pending');
   const preparingOrders = orders.filter(order => order.status === 'preparing');
   const readyOrders = orders.filter(order => order.status === 'ready' || order.status === 'completed');
+  const deliveredOrders = orders.filter(order => order.status === 'delivered');
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -94,6 +95,9 @@ const Admin: React.FC = () => {
       case 'ready':
         newStatus = 'ready';
         break;
+      case 'delivered':
+        newStatus = 'delivered';
+        break;
       default:
         return;
     }
@@ -154,7 +158,7 @@ const Admin: React.FC = () => {
         </div>
 
         <DragDropContext onDragEnd={handleDragEnd}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div>
               <Card>
                 <CardHeader className="bg-yellow-100 dark:bg-yellow-900/20">
@@ -269,6 +273,52 @@ const Admin: React.FC = () => {
                           </div>
                         ) : (
                           readyOrders.map((order, index) => (
+                            <Draggable key={order.id} draggableId={order.id} index={index}>
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                >
+                                  <AdminOrderCard 
+                                    order={order} 
+                                    isDragging={snapshot.isDragging}
+                                  />
+                                </div>
+                              )}
+                            </Draggable>
+                          ))
+                        )}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div>
+              <Card>
+                <CardHeader className="bg-purple-100 dark:bg-purple-900/20">
+                  <CardTitle className="text-lg">Delivered Orders</CardTitle>
+                  <CardDescription>
+                    {deliveredOrders.length} orders archived
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-4">
+                  <Droppable droppableId="delivered">
+                    {(provided) => (
+                      <div
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                        className="min-h-[200px]"
+                      >
+                        {deliveredOrders.length === 0 ? (
+                          <div className="text-center py-8 text-muted-foreground">
+                            No delivered orders
+                          </div>
+                        ) : (
+                          deliveredOrders.map((order, index) => (
                             <Draggable key={order.id} draggableId={order.id} index={index}>
                               {(provided, snapshot) => (
                                 <div

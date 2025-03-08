@@ -72,6 +72,7 @@ export function getOrderStatusOptions() {
     { value: 'preparing', label: 'Preparing' },
     { value: 'ready', label: 'Ready for Pickup' },
     { value: 'completed', label: 'Completed' },
+    { value: 'delivered', label: 'Delivered' },
     { value: 'cancelled', label: 'Cancelled' }
   ];
 }

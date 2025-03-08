@@ -26,7 +26,7 @@ export interface CartItem {
   specialInstructions?: string;
 }
 
-export type OrderStatus = 'pending' | 'preparing' | 'ready' | 'completed' | 'cancelled';
+export type OrderStatus = 'pending' | 'preparing' | 'ready' | 'completed' | 'cancelled' | 'delivered';
 export type PaymentStatus = 'pending' | 'paid' | 'failed';
 
 export interface CustomerInfo {
