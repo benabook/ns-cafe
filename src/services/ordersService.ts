@@ -50,12 +50,11 @@ export async function getAllOrders(): Promise<{ data: Order[]; error: any }> {
         phone: order.customer_phone
       },
       items: order.items as CartItem[],
-      status: order.status as any,
+      status: order.status,
       total: order.total,
       date: new Date(order.created_at),
-      tableNumber: order.table_number,
-      paymentMethod: order.payment_method as any,
-      paymentStatus: order.payment_status as any,
+      paymentMethod: order.payment_method,
+      paymentStatus: order.payment_status,
       pickupTime: order.pickup_time,
       createdAt: order.created_at
     }));

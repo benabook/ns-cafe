@@ -4,21 +4,23 @@ import { useNavigate } from 'react-router-dom';
 import AnimatedPage from '@/components/ui/AnimatedPage';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Clock, RefreshCw } from 'lucide-react';
-import { getAllOrders, updateOrderStatus, getOrderStatusOptions } from '@/services/ordersService';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { ArrowLeft, RefreshCw } from 'lucide-react';
+import { getAllOrders, updateOrderStatus } from '@/services/ordersService';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { Order } from '@/types';
+import AdminOrderCard from '@/components/admin/AdminOrderCard';
 
 const Admin: React.FC = () => {
   const navigate = useNavigate();
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('all');
-  const statusOptions = getOrderStatusOptions();
+
+  // Filter orders based on status
+  const pendingOrders = orders.filter(order => order.status === 'pending');
+  const preparingOrders = orders.filter(order => order.status === 'preparing');
+  const readyOrders = orders.filter(order => order.status === 'ready' || order.status === 'completed');
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -50,36 +52,44 @@ const Admin: React.FC = () => {
     };
   }, []);
 
-  const filteredOrders = activeTab === 'all' 
-    ? orders 
-    : orders.filter(order => order.status === activeTab);
+  const handleDragEnd = async (result: DropResult) => {
+    const { source, destination, draggableId } = result;
 
-  const handleStatusChange = async (orderId: string, newStatus: string) => {
-    const { success, error } = await updateOrderStatus(orderId, newStatus);
+    // If dropped outside a droppable area
+    if (!destination) return;
+
+    // If dropped in the same place
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    ) return;
+
+    // Determine the new status based on the destination column
+    let newStatus: string;
+    switch (destination.droppableId) {
+      case 'pending':
+        newStatus = 'pending';
+        break;
+      case 'preparing':
+        newStatus = 'preparing';
+        break;
+      case 'ready':
+        newStatus = 'ready';
+        break;
+      default:
+        return;
+    }
+
+    // Update the order status in the database
+    const { success, error } = await updateOrderStatus(draggableId, newStatus);
     
     if (success) {
       toast.success(`Order status updated to ${newStatus}`);
-      fetchOrders();
+      // No need to manually update state as we have real-time updates via supabase subscription
     } else {
       toast.error("Failed to update order status");
       console.error("Error updating order status:", error);
     }
-  };
-
-  const getStatusBadgeColor = (status: string) => {
-    switch (status) {
-      case 'pending': return 'bg-yellow-500 hover:bg-yellow-600';
-      case 'preparing': return 'bg-blue-500 hover:bg-blue-600';
-      case 'ready': return 'bg-green-500 hover:bg-green-600';
-      case 'completed': return 'bg-gray-500 hover:bg-gray-600';
-      case 'cancelled': return 'bg-red-500 hover:bg-red-600';
-      default: return 'bg-gray-500 hover:bg-gray-600';
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleString();
   };
 
   return (
@@ -98,155 +108,161 @@ const Admin: React.FC = () => {
             className="flex items-center gap-1"
             onClick={fetchOrders}
           >
-            <RefreshCw className="h-4 w-4" /> Refresh
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
           </Button>
         </div>
 
-        <div className="max-w-5xl mx-auto">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl">Order Management</CardTitle>
-              <CardDescription>
-                View and manage all customer orders
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="grid grid-cols-5 mb-6">
-                  <TabsTrigger value="all">All</TabsTrigger>
-                  <TabsTrigger value="pending">Pending</TabsTrigger>
-                  <TabsTrigger value="preparing">Preparing</TabsTrigger>
-                  <TabsTrigger value="ready">Ready</TabsTrigger>
-                  <TabsTrigger value="completed">Completed</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value={activeTab} className="space-y-4">
-                  {loading ? (
-                    <div className="flex justify-center py-8">
-                      <RefreshCw className="h-8 w-8 animate-spin text-primary" />
-                    </div>
-                  ) : filteredOrders.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">
-                      No orders found
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {filteredOrders.map((order) => (
-                        <Card key={order.id} className="overflow-hidden">
-                          <div className="p-4">
-                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
-                              <div>
-                                <div className="flex items-center gap-3">
-                                  <h3 className="text-lg font-medium">
-                                    Order #{order.id.substring(0, 8)}
-                                  </h3>
-                                  <Badge className={getStatusBadgeColor(order.status)}>
-                                    {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                                  </Badge>
-                                </div>
-                                <div className="text-sm text-muted-foreground mt-1">
-                                  {order.createdAt ? formatDate(order.createdAt) : ''}
-                                </div>
-                              </div>
-                              
-                              <div className="mt-3 md:mt-0">
-                                <Select
-                                  defaultValue={order.status}
-                                  onValueChange={(value) => handleStatusChange(order.id, value)}
-                                >
-                                  <SelectTrigger className="w-40">
-                                    <SelectValue placeholder="Status" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {statusOptions.map((option) => (
-                                      <SelectItem key={option.value} value={option.value}>
-                                        {option.label}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                            </div>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                              <div>
-                                <div className="text-sm font-medium text-muted-foreground mb-1">
-                                  Customer
-                                </div>
-                                <div>{order.customerInfo.name}</div>
-                                <div className="text-sm">{order.customerInfo.phone}</div>
-                                {order.customerInfo.discord && (
-                                  <div className="text-sm">{order.customerInfo.discord}</div>
-                                )}
-                              </div>
-                              
-                              <div>
-                                <div className="text-sm font-medium text-muted-foreground mb-1">
-                                  Pickup
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <Clock className="h-4 w-4" />
-                                  <span>{order.pickupTime} minutes</span>
-                                </div>
-                                {order.tableNumber && (
-                                  <div className="text-sm">Table: {order.tableNumber}</div>
-                                )}
-                              </div>
-                              
-                              <div>
-                                <div className="text-sm font-medium text-muted-foreground mb-1">
-                                  Payment
-                                </div>
-                                <div>{order.paymentMethod}</div>
-                                <div className="text-sm capitalize">{order.paymentStatus}</div>
-                              </div>
-                            </div>
-
-                            <Separator className="my-4" />
-                            
-                            <div className="space-y-3">
-                              <div className="font-medium">Order Items</div>
-                              {order.items.map((item: any, index: number) => (
-                                <div key={index} className="flex justify-between">
-                                  <div>
-                                    <div className="flex items-center gap-2">
-                                      <span className="font-medium">{item.quantity}x</span>
-                                      <span>{item.name}</span>
-                                    </div>
-                                    {item.selectedOption && (
-                                      <div className="text-sm text-muted-foreground ml-7">
-                                        Option: {item.selectedOption.name}
-                                      </div>
-                                    )}
-                                    {item.specialInstructions && (
-                                      <div className="text-sm text-muted-foreground ml-7">
-                                        Note: {item.specialInstructions}
-                                      </div>
-                                    )}
-                                  </div>
-                                  <div className="font-medium">
-                                    RM {(item.price * item.quantity).toFixed(2)}
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                            
-                            <Separator className="my-4" />
-                            
-                            <div className="flex justify-between font-medium text-lg">
-                              <div>Total</div>
-                              <div>RM {order.total.toFixed(2)}</div>
-                            </div>
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
-                  )}
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold">Order Management</h1>
+          <p className="text-muted-foreground">
+            Drag and drop orders between columns to update their status
+          </p>
         </div>
+
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* New Orders Column */}
+            <div>
+              <Card>
+                <CardHeader className="bg-yellow-100 dark:bg-yellow-900/20">
+                  <CardTitle className="text-lg">New Orders</CardTitle>
+                  <CardDescription>
+                    {pendingOrders.length} pending orders
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-4">
+                  <Droppable droppableId="pending">
+                    {(provided) => (
+                      <div
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                        className="min-h-[200px]"
+                      >
+                        {pendingOrders.length === 0 ? (
+                          <div className="text-center py-8 text-muted-foreground">
+                            No pending orders
+                          </div>
+                        ) : (
+                          pendingOrders.map((order, index) => (
+                            <Draggable key={order.id} draggableId={order.id} index={index}>
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                >
+                                  <AdminOrderCard 
+                                    order={order} 
+                                    isDragging={snapshot.isDragging}
+                                  />
+                                </div>
+                              )}
+                            </Draggable>
+                          ))
+                        )}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Preparing Orders Column */}
+            <div>
+              <Card>
+                <CardHeader className="bg-blue-100 dark:bg-blue-900/20">
+                  <CardTitle className="text-lg">Orders in Progress</CardTitle>
+                  <CardDescription>
+                    {preparingOrders.length} orders being prepared
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-4">
+                  <Droppable droppableId="preparing">
+                    {(provided) => (
+                      <div
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                        className="min-h-[200px]"
+                      >
+                        {preparingOrders.length === 0 ? (
+                          <div className="text-center py-8 text-muted-foreground">
+                            No orders in progress
+                          </div>
+                        ) : (
+                          preparingOrders.map((order, index) => (
+                            <Draggable key={order.id} draggableId={order.id} index={index}>
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                >
+                                  <AdminOrderCard 
+                                    order={order} 
+                                    isDragging={snapshot.isDragging}
+                                  />
+                                </div>
+                              )}
+                            </Draggable>
+                          ))
+                        )}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Ready Orders Column */}
+            <div>
+              <Card>
+                <CardHeader className="bg-green-100 dark:bg-green-900/20">
+                  <CardTitle className="text-lg">Completed Orders</CardTitle>
+                  <CardDescription>
+                    {readyOrders.length} orders ready for pickup
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-4">
+                  <Droppable droppableId="ready">
+                    {(provided) => (
+                      <div
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                        className="min-h-[200px]"
+                      >
+                        {readyOrders.length === 0 ? (
+                          <div className="text-center py-8 text-muted-foreground">
+                            No completed orders
+                          </div>
+                        ) : (
+                          readyOrders.map((order, index) => (
+                            <Draggable key={order.id} draggableId={order.id} index={index}>
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                >
+                                  <AdminOrderCard 
+                                    order={order} 
+                                    isDragging={snapshot.isDragging}
+                                  />
+                                </div>
+                              )}
+                            </Draggable>
+                          ))
+                        )}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </DragDropContext>
       </div>
     </AnimatedPage>
   );
