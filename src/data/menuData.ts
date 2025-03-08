@@ -127,7 +127,7 @@ export const menuItems: MenuItem[] = [
     price: 8,
     category: 'add-ons',
     ingredients: [],
-    image: 'https://images.unsplash.com/photo-1586444248888-f9b241404b74'
+    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff'
   },
   {
     id: 'add-sunny-side-up',
@@ -191,7 +191,7 @@ export const menuItems: MenuItem[] = [
     usdPrice: 3.6,
     category: 'espresso-drinks',
     ingredients: ['Espresso', 'steamed milk', 'chocolate'],
-    image: 'https://images.unsplash.com/photo-1529892485617-25f63cd7b1e4',
+    image: 'https://images.unsplash.com/photo-1534687941688-13b3c6e0ed8f',
     options: [
       { id: 'iced-mocha', name: 'Iced / Cold', price: 1 },
       { id: 'extra-shot-mocha', name: 'Extra Shot', price: 4 },
@@ -312,7 +312,7 @@ export const menuItems: MenuItem[] = [
     usdPrice: 3.2,
     category: 'cold-pressed',
     ingredients: ['Celery', 'cucumber', 'ginger', 'green apple', 'spinach'],
-    image: 'https://images.unsplash.com/photo-1622597466433-5f1b2d0bd628'
+    image: 'https://images.unsplash.com/photo-1542444459-dd9922522591'
   },
   {
     id: 'immune-booster-juice',
