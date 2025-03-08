@@ -2,6 +2,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { CartContextType, CartItem } from '@/types';
 import { toast } from 'sonner';
+import { v4 as uuidv4 } from 'uuid';
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
@@ -18,25 +19,32 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   }, [cart]);
 
   const addToCart = (item: CartItem) => {
+    // Ensure the item has an ID
+    const itemWithId = {
+      ...item,
+      id: item.id || uuidv4()
+    };
+
     setCart((prevCart) => {
       // Check if item already exists with same options
       const existingItemIndex = prevCart.findIndex(
         (cartItem) => 
-          cartItem.menuItemId === item.menuItemId && 
-          cartItem.selectedOption?.id === item.selectedOption?.id
+          cartItem.menuItemId === itemWithId.menuItemId && 
+          JSON.stringify(cartItem.selectedOption) === JSON.stringify(itemWithId.selectedOption) &&
+          cartItem.specialInstructions === itemWithId.specialInstructions
       );
       
       if (existingItemIndex !== -1) {
         // Update quantity if item exists
         const updatedCart = [...prevCart];
-        updatedCart[existingItemIndex].quantity += item.quantity;
+        updatedCart[existingItemIndex].quantity += itemWithId.quantity;
         
-        toast.success(`${item.name} quantity updated in cart`);
+        toast.success(`${itemWithId.name} quantity updated in cart`);
         return updatedCart;
       } else {
         // Add new item if it doesn't exist
-        toast.success(`${item.name} added to cart`);
-        return [...prevCart, item];
+        toast.success(`${itemWithId.name} added to cart`);
+        return [...prevCart, itemWithId];
       }
     });
   };
@@ -52,7 +60,10 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const updateQuantity = (id: string, quantity: number) => {
-    if (quantity < 1) return;
+    if (quantity < 1) {
+      removeFromCart(id);
+      return;
+    }
     
     setCart((prevCart) =>
       prevCart.map((item) =>

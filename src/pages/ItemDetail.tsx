@@ -4,18 +4,21 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { getMenuItemById } from '@/data/menuData';
 import AnimatedPage from '@/components/ui/AnimatedPage';
-import { ChevronLeft, Minus, Plus } from 'lucide-react';
+import { ChevronLeft, Minus, Plus, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
+import { v4 as uuidv4 } from 'uuid';
+import { useCart } from '@/context/CartContext';
 
 const ItemDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const menuItem = getMenuItemById(id || '');
+  const { addToCart } = useCart();
   
   const [quantity, setQuantity] = useState(1);
   const [selectedOption, setSelectedOption] = useState(
@@ -50,13 +53,17 @@ const ItemDetail: React.FC = () => {
   };
   
   const handleAddToCart = () => {
-    toast.success(`${menuItem.name} added to cart`, {
-      description: `${quantity} × ${selectedOption ? `${menuItem.name} (${selectedOption.name})` : menuItem.name}`
-    });
+    const cartItem = {
+      id: uuidv4(),
+      menuItemId: menuItem.id,
+      name: menuItem.name,
+      price: menuItem.price + (selectedOption?.price || 0),
+      quantity: quantity,
+      selectedOption: selectedOption,
+      specialInstructions: specialInstructions.trim() || undefined
+    };
     
-    // In a real implementation, this would add the item to the cart
-    // For now, just navigate back to the menu
-    navigate('/');
+    addToCart(cartItem);
   };
   
   return (
@@ -182,13 +189,20 @@ const ItemDetail: React.FC = () => {
                     </div>
                   </div>
                   
-                  <div className="mt-auto">
+                  <div className="flex gap-3 mt-auto">
                     <Button 
                       size="lg" 
-                      className="w-full"
+                      className="flex-1"
                       onClick={handleAddToCart}
                     >
                       Add to Cart • RM {calculateTotalPrice().toFixed(2)}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      onClick={() => navigate('/cart')}
+                    >
+                      <ShoppingCart className="h-5 w-5" />
                     </Button>
                   </div>
                 </motion.div>
