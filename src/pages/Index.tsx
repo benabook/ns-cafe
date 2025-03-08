@@ -15,6 +15,10 @@ const MenuPage: React.FC = () => {
     { id: 'all', name: 'All' },
     { id: 'salads-bowls', name: 'Salads & Bowls' },
     { id: 'mains-sandwiches', name: 'Mains & Sandwiches' },
+    { id: 'espresso-drinks', name: 'Espresso Drinks' },
+    { id: 'non-coffee', name: 'Non-Coffee' },
+    { id: 'smoothies', name: 'Smoothies' },
+    { id: 'cold-pressed', name: 'Cold-Pressed Juices' },
     { id: 'add-ons', name: 'Add Ons' },
   ];
   
@@ -46,20 +50,20 @@ const MenuPage: React.FC = () => {
             </span>
             <h1 className="text-4xl font-bold mt-4 mb-4">Fresh & Nutritious</h1>
             <p className="text-muted-foreground">
-              Browse our menu of healthy, nutritious food options made with fresh, high-quality ingredients.
+              Browse our menu of healthy, nutritious food and beverage options made with fresh, high-quality ingredients.
             </p>
           </motion.div>
         </div>
         
         <Tabs defaultValue="all" className="w-full mb-10">
-          <div className="flex justify-center">
-            <TabsList className="grid grid-cols-2 md:grid-cols-4">
+          <div className="flex justify-center overflow-x-auto pb-2">
+            <TabsList className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8">
               {categories.map(category => (
                 <TabsTrigger 
                   key={category.id} 
                   value={category.id}
                   onClick={() => setSelectedCategory(category.id)}
-                  className="px-6"
+                  className="px-3 whitespace-nowrap"
                 >
                   {category.name}
                 </TabsTrigger>

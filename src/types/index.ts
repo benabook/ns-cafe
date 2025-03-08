@@ -1,4 +1,3 @@
-
 export interface Option {
   id: string;
   name: string;
@@ -9,10 +8,11 @@ export interface MenuItem {
   id: string;
   name: string;
   price: number;
-  category: 'salads-bowls' | 'mains-sandwiches' | 'add-ons';
+  category: 'salads-bowls' | 'mains-sandwiches' | 'add-ons' | 'espresso-drinks' | 'non-coffee' | 'smoothies' | 'cold-pressed';
   ingredients: string[];
   image: string;
   options?: Option[];
+  usdPrice?: number; // Added for USD price display
 }
 
 export interface CartItem {

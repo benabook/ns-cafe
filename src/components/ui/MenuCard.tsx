@@ -40,9 +40,16 @@ const MenuCard: React.FC<MenuCardProps> = ({ item, className }) => {
             onLoad={() => setIsLoading(false)}
           />
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 pt-12">
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-white/20 backdrop-blur-sm text-white">
-              RM {item.price.toFixed(2)}
-            </span>
+            <div className="flex flex-col gap-1">
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-white/20 backdrop-blur-sm text-white">
+                RM {item.price.toFixed(2)}
+              </span>
+              {item.usdPrice && (
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-white/10 backdrop-blur-sm text-white/80">
+                  ≈ USD {item.usdPrice.toFixed(1)}
+                </span>
+              )}
+            </div>
           </div>
         </div>
         

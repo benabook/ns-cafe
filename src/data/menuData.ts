@@ -1,4 +1,3 @@
-
 import { MenuItem } from '@/types';
 
 // Images will be placeholders until real images are added
@@ -137,6 +136,192 @@ export const menuItems: MenuItem[] = [
     category: 'add-ons',
     ingredients: [],
     image: 'https://images.unsplash.com/photo-1510693206972-df098062cb71'
+  },
+  
+  // Espresso-Based Drinks
+  {
+    id: 'espresso',
+    name: 'Espresso',
+    price: 10,
+    usdPrice: 2.3,
+    category: 'espresso-drinks',
+    ingredients: ['Freshly ground coffee beans'],
+    image: 'https://images.unsplash.com/photo-1610889556528-9a770e32642f',
+    options: [
+      { id: 'iced-espresso', name: 'Iced / Cold', price: 1 },
+      { id: 'extra-shot-espresso', name: 'Extra Shot', price: 4 },
+      { id: 'almond-milk-espresso', name: 'Almond Milk', price: 3 },
+      { id: 'oat-milk-espresso', name: 'Oat Milk', price: 3 }
+    ]
+  },
+  {
+    id: 'americano',
+    name: 'Americano',
+    price: 10,
+    usdPrice: 2.3,
+    category: 'espresso-drinks',
+    ingredients: ['Espresso', 'hot water'],
+    image: 'https://images.unsplash.com/photo-1551030173-122aabc4489c',
+    options: [
+      { id: 'iced-americano', name: 'Iced / Cold', price: 1 },
+      { id: 'extra-shot-americano', name: 'Extra Shot', price: 4 },
+      { id: 'almond-milk-americano', name: 'Almond Milk', price: 3 },
+      { id: 'oat-milk-americano', name: 'Oat Milk', price: 3 }
+    ]
+  },
+  {
+    id: 'latte',
+    name: 'Latte',
+    price: 14,
+    usdPrice: 3.2,
+    category: 'espresso-drinks',
+    ingredients: ['Espresso', 'steamed milk', 'thin layer of foam'],
+    image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772',
+    options: [
+      { id: 'iced-latte', name: 'Iced / Cold', price: 1 },
+      { id: 'extra-shot-latte', name: 'Extra Shot', price: 4 },
+      { id: 'almond-milk-latte', name: 'Almond Milk', price: 3 },
+      { id: 'oat-milk-latte', name: 'Oat Milk', price: 3 }
+    ]
+  },
+  {
+    id: 'mocha',
+    name: 'Mocha',
+    price: 16,
+    usdPrice: 3.6,
+    category: 'espresso-drinks',
+    ingredients: ['Espresso', 'steamed milk', 'chocolate'],
+    image: 'https://images.unsplash.com/photo-1510215047363-ac7d704c4e7b',
+    options: [
+      { id: 'iced-mocha', name: 'Iced / Cold', price: 1 },
+      { id: 'extra-shot-mocha', name: 'Extra Shot', price: 4 },
+      { id: 'almond-milk-mocha', name: 'Almond Milk', price: 3 },
+      { id: 'oat-milk-mocha', name: 'Oat Milk', price: 3 }
+    ]
+  },
+  
+  // Non-Coffee Blends
+  {
+    id: 'matcha',
+    name: 'Matcha',
+    price: 14,
+    usdPrice: 3.2,
+    category: 'non-coffee',
+    ingredients: ['Premium matcha powder', 'milk'],
+    image: 'https://images.unsplash.com/photo-1536257104079-aa99c6460a5a',
+    options: [
+      { id: 'iced-matcha', name: 'Iced / Cold', price: 1 },
+      { id: 'almond-milk-matcha', name: 'Almond Milk', price: 3 },
+      { id: 'oat-milk-matcha', name: 'Oat Milk', price: 3 }
+    ]
+  },
+  {
+    id: 'chocolate',
+    name: 'Chocolate',
+    price: 12,
+    usdPrice: 2.7,
+    category: 'non-coffee',
+    ingredients: ['Premium cocoa powder', 'milk'],
+    image: 'https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed',
+    options: [
+      { id: 'iced-chocolate', name: 'Iced / Cold', price: 1 },
+      { id: 'almond-milk-chocolate', name: 'Almond Milk', price: 3 },
+      { id: 'oat-milk-chocolate', name: 'Oat Milk', price: 3 }
+    ]
+  },
+  {
+    id: 'fresh-milk',
+    name: 'Fresh Milk',
+    price: 8,
+    usdPrice: 1.8,
+    category: 'non-coffee',
+    ingredients: ['Fresh milk'],
+    image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150',
+    options: [
+      { id: 'iced-fresh-milk', name: 'Iced / Cold', price: 1 }
+    ]
+  },
+  {
+    id: 'almond-milk',
+    name: 'Almond Milk',
+    price: 11,
+    usdPrice: 2.5,
+    category: 'non-coffee',
+    ingredients: ['Almond milk'],
+    image: 'https://images.unsplash.com/photo-1556881286-fc6915169721',
+    options: [
+      { id: 'iced-almond-milk', name: 'Iced / Cold', price: 1 }
+    ]
+  },
+  {
+    id: 'oat-milk',
+    name: 'Oat Milk',
+    price: 11,
+    usdPrice: 2.5,
+    category: 'non-coffee',
+    ingredients: ['Oat milk'],
+    image: 'https://images.unsplash.com/photo-1576186726158-458e97861c6a',
+    options: [
+      { id: 'iced-oat-milk', name: 'Iced / Cold', price: 1 }
+    ]
+  },
+  
+  // Smoothies
+  {
+    id: 'green-power-smoothie',
+    name: 'Green Power Smoothie',
+    price: 22,
+    usdPrice: 5.0,
+    category: 'smoothies',
+    ingredients: ['Chopped spinach', 'avocado', 'banana', 'almond milk (unsweetened)', 'whey protein'],
+    image: 'https://images.unsplash.com/photo-1610970881699-44a5587cabec'
+  },
+  {
+    id: 'peanut-butter-banana-smoothie',
+    name: 'Peanut Butter Banana Smoothie',
+    price: 22,
+    usdPrice: 5.0,
+    category: 'smoothies',
+    ingredients: ['Peanut butter', 'banana', 'almond milk (unsweetened)', 'whey protein'],
+    image: 'https://images.unsplash.com/photo-1588929473475-beb2c59c8f92'
+  },
+  {
+    id: 'mixed-berries-smoothie',
+    name: 'Mixed Berries Smoothie',
+    price: 22,
+    usdPrice: 5.0,
+    category: 'smoothies',
+    ingredients: ['Blueberries', 'strawberries', 'almond milk (unsweetened)', 'whey protein'],
+    image: 'https://images.unsplash.com/photo-1553530666-ba11a90fe8b7'
+  },
+  
+  // Cold-Pressed Juices
+  {
+    id: 'vital-glow-juice',
+    name: 'Vital Glow Juice',
+    price: 14,
+    usdPrice: 3.2,
+    category: 'cold-pressed',
+    ingredients: ['Beetroot', 'carrot', 'green apple'],
+    image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423'
+  },
+  {
+    id: 'green-detox-juice',
+    name: 'Green Detox Juice',
+    price: 14,
+    usdPrice: 3.2,
+    category: 'cold-pressed',
+    ingredients: ['Celery', 'cucumber', 'ginger', 'green apple', 'spinach'],
+    image: 'https://images.unsplash.com/photo-1622597459447-7c95b700e554'
+  },
+  {
+    id: 'immune-booster-juice',
+    name: 'Immune Booster Juice',
+    price: 14,
+    usdPrice: 3.2,
+    category: 'cold-pressed',
+    ingredients: ['Carrot', 'ginger', 'orange'],
+    image: 'https://images.unsplash.com/photo-1589733955941-5eeaf752f6dd'
   }
 ];
 
