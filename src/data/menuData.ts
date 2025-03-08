@@ -1,3 +1,4 @@
+
 import { MenuItem } from '@/types';
 
 // Images will be placeholders until real images are added
@@ -191,7 +192,7 @@ export const menuItems: MenuItem[] = [
     usdPrice: 3.6,
     category: 'espresso-drinks',
     ingredients: ['Espresso', 'steamed milk', 'chocolate'],
-    image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1529892485617-25f63cd7b1e4',
     options: [
       { id: 'iced-mocha', name: 'Iced / Cold', price: 1 },
       { id: 'extra-shot-mocha', name: 'Extra Shot', price: 4 },
@@ -260,7 +261,7 @@ export const menuItems: MenuItem[] = [
     usdPrice: 2.5,
     category: 'non-coffee',
     ingredients: ['Oat milk'],
-    image: 'https://images.unsplash.com/photo-1559598467-f8b76c8155d0?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e',
     options: [
       { id: 'iced-oat-milk', name: 'Iced / Cold', price: 1 }
     ]
@@ -283,7 +284,7 @@ export const menuItems: MenuItem[] = [
     usdPrice: 5.0,
     category: 'smoothies',
     ingredients: ['Peanut butter', 'banana', 'almond milk (unsweetened)', 'whey protein'],
-    image: 'https://images.unsplash.com/photo-1623428188474-3cda25183cc4?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1570696516188-ade861b84a49',
     options: []
   },
   {
@@ -293,7 +294,7 @@ export const menuItems: MenuItem[] = [
     usdPrice: 5.0,
     category: 'smoothies',
     ingredients: ['Blueberries', 'strawberries', 'almond milk (unsweetened)', 'whey protein'],
-    image: 'https://images.unsplash.com/photo-1596591868231-05e908775c0b?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1553530666-2a2f9fc605f6',
     options: []
   },
   
@@ -314,7 +315,7 @@ export const menuItems: MenuItem[] = [
     usdPrice: 3.2,
     category: 'cold-pressed',
     ingredients: ['Celery', 'cucumber', 'ginger', 'green apple', 'spinach'],
-    image: 'https://images.unsplash.com/photo-1610725664285-7c57e6eeac3f?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1638176066666-ffcdeee567c7',
     options: []
   },
   {

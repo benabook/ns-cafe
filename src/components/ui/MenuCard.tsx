@@ -13,6 +13,16 @@ interface MenuCardProps {
 const MenuCard: React.FC<MenuCardProps> = ({ item, className }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+
+  // Function to handle retry loading images
+  const handleRetry = () => {
+    if (retryCount < 2) { // Max 2 retries
+      setIsLoading(true);
+      setHasError(false);
+      setRetryCount(prevCount => prevCount + 1);
+    }
+  };
 
   return (
     <motion.div 
@@ -32,13 +42,26 @@ const MenuCard: React.FC<MenuCardProps> = ({ item, className }) => {
             <div className="absolute inset-0 bg-muted animate-pulse" />
           )}
           {hasError && (
-            <div className="absolute inset-0 bg-muted flex items-center justify-center">
+            <div className="absolute inset-0 bg-muted flex items-center justify-center flex-col">
               <span className="text-muted-foreground text-sm">Image unavailable</span>
+              {retryCount < 2 && (
+                <button 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleRetry();
+                  }}
+                  className="text-xs text-primary mt-1 hover:underline"
+                >
+                  Retry
+                </button>
+              )}
             </div>
           )}
           <img
             src={item.image}
             alt={item.name}
+            key={`${item.id}-${retryCount}`} // Force re-render on retry
             className={cn(
               "w-full h-full object-cover transition-opacity duration-700",
               (isLoading || hasError) ? "opacity-0" : "opacity-100"
@@ -47,7 +70,7 @@ const MenuCard: React.FC<MenuCardProps> = ({ item, className }) => {
             onError={() => {
               setIsLoading(false);
               setHasError(true);
-              console.error(`Failed to load image for: ${item.name}`);
+              console.error(`Failed to load image for: ${item.name}, URL: ${item.image}`);
             }}
           />
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 pt-12">
