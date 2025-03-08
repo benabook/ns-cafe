@@ -52,7 +52,7 @@ export async function getAllOrders(): Promise<{ data: Order[]; error: any }> {
       status: order.status as Order['status'], // Ensure correct type
       total: order.total,
       date: new Date(order.created_at),
-      paymentMethod: order.payment_method,
+      paymentMethod: order.payment_method as Order['paymentMethod'], // Fix the type casting here
       paymentStatus: order.payment_status,
       pickupTime: order.pickup_time,
       createdAt: order.created_at

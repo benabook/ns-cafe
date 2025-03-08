@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AnimatedPage from '@/components/ui/AnimatedPage';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { ArrowLeft, RefreshCw, LogOut } from 'lucide-react';
+import { ArrowLeft, LogOut } from 'lucide-react';
 import { getAllOrders, updateOrderStatus } from '@/services/ordersService';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -45,9 +46,15 @@ const Admin: React.FC = () => {
   useEffect(() => {
     fetchOrders();
     
+    // Subscribe to real-time updates from Supabase
     const ordersSubscription = supabase
       .channel('orders_channel')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
+      .on('postgres_changes', { 
+        event: '*', 
+        schema: 'public', 
+        table: 'orders' 
+      }, () => {
+        // Fetch the latest orders when any change occurs
         fetchOrders();
       })
       .subscribe();
@@ -82,6 +89,15 @@ const Admin: React.FC = () => {
         return;
     }
 
+    // Optimistically update the UI
+    const updatedOrders = orders.map(order => 
+      order.id === draggableId 
+        ? { ...order, status: newStatus as Order['status'] } 
+        : order
+    );
+    setOrders(updatedOrders);
+
+    // Then update the database
     const { success, error } = await updateOrderStatus(draggableId, newStatus);
     
     if (success) {
@@ -89,6 +105,8 @@ const Admin: React.FC = () => {
     } else {
       toast.error("Failed to update order status");
       console.error("Error updating order status:", error);
+      // Revert to the original state if the update fails
+      fetchOrders();
     }
   };
 
@@ -109,13 +127,6 @@ const Admin: React.FC = () => {
             <ArrowLeft className="h-4 w-4" /> Back to Menu
           </Button>
           <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              className="flex items-center gap-1"
-              onClick={fetchOrders}
-            >
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
-            </Button>
             <Button 
               variant="destructive" 
               className="flex items-center gap-1"
