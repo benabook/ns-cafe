@@ -8,9 +8,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Clock, Package, Check, X, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Clock, RefreshCw } from 'lucide-react';
 import { getAllOrders, updateOrderStatus, getOrderStatusOptions } from '@/services/ordersService';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 const Admin: React.FC = () => {
   const navigate = useNavigate();
@@ -144,7 +145,7 @@ const Admin: React.FC = () => {
                                   </Badge>
                                 </div>
                                 <div className="text-sm text-muted-foreground mt-1">
-                                  {formatDate(order.created_at)}
+                                  {order.createdAt ? formatDate(order.createdAt) : ''}
                                 </div>
                               </div>
                               
@@ -172,10 +173,10 @@ const Admin: React.FC = () => {
                                 <div className="text-sm font-medium text-muted-foreground mb-1">
                                   Customer
                                 </div>
-                                <div>{order.customer_name}</div>
-                                <div className="text-sm">{order.customer_phone}</div>
-                                {order.customer_discord && (
-                                  <div className="text-sm">{order.customer_discord}</div>
+                                <div>{order.customerInfo.name}</div>
+                                <div className="text-sm">{order.customerInfo.phone}</div>
+                                {order.customerInfo.discord && (
+                                  <div className="text-sm">{order.customerInfo.discord}</div>
                                 )}
                               </div>
                               
@@ -185,10 +186,10 @@ const Admin: React.FC = () => {
                                 </div>
                                 <div className="flex items-center gap-1">
                                   <Clock className="h-4 w-4" />
-                                  <span>{order.pickup_time} minutes</span>
+                                  <span>{order.pickupTime} minutes</span>
                                 </div>
-                                {order.table_number && (
-                                  <div className="text-sm">Table: {order.table_number}</div>
+                                {order.tableNumber && (
+                                  <div className="text-sm">Table: {order.tableNumber}</div>
                                 )}
                               </div>
                               
@@ -196,8 +197,8 @@ const Admin: React.FC = () => {
                                 <div className="text-sm font-medium text-muted-foreground mb-1">
                                   Payment
                                 </div>
-                                <div>{order.payment_method}</div>
-                                <div className="text-sm capitalize">{order.payment_status}</div>
+                                <div>{order.paymentMethod}</div>
+                                <div className="text-sm capitalize">{order.paymentStatus}</div>
                               </div>
                             </div>
 
@@ -205,21 +206,21 @@ const Admin: React.FC = () => {
                             
                             <div className="space-y-3">
                               <div className="font-medium">Order Items</div>
-                              {order.items.map((item: any) => (
-                                <div key={item.id} className="flex justify-between">
+                              {order.items.map((item: any, index: number) => (
+                                <div key={index} className="flex justify-between">
                                   <div>
                                     <div className="flex items-center gap-2">
                                       <span className="font-medium">{item.quantity}x</span>
                                       <span>{item.name}</span>
                                     </div>
-                                    {item.selected_option_name && (
+                                    {item.selectedOption && (
                                       <div className="text-sm text-muted-foreground ml-7">
-                                        Option: {item.selected_option_name}
+                                        Option: {item.selectedOption.name}
                                       </div>
                                     )}
-                                    {item.special_instructions && (
+                                    {item.specialInstructions && (
                                       <div className="text-sm text-muted-foreground ml-7">
-                                        Note: {item.special_instructions}
+                                        Note: {item.specialInstructions}
                                       </div>
                                     )}
                                   </div>

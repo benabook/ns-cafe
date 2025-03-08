@@ -9,56 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      order_items: {
-        Row: {
-          created_at: string
-          id: string
-          menu_item_id: string
-          name: string
-          order_id: string
-          price: number
-          quantity: number
-          selected_option_id: string | null
-          selected_option_name: string | null
-          selected_option_price: number | null
-          special_instructions: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          menu_item_id: string
-          name: string
-          order_id: string
-          price: number
-          quantity: number
-          selected_option_id?: string | null
-          selected_option_name?: string | null
-          selected_option_price?: number | null
-          special_instructions?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          menu_item_id?: string
-          name?: string
-          order_id?: string
-          price?: number
-          quantity?: number
-          selected_option_id?: string | null
-          selected_option_name?: string | null
-          selected_option_price?: number | null
-          special_instructions?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "order_items_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       orders: {
         Row: {
           created_at: string
@@ -66,11 +16,11 @@ export type Database = {
           customer_name: string
           customer_phone: string
           id: string
+          items: Json
           payment_method: string
           payment_status: string
           pickup_time: number
           status: string
-          table_number: string | null
           total: number
         }
         Insert: {
@@ -79,11 +29,11 @@ export type Database = {
           customer_name: string
           customer_phone: string
           id?: string
+          items: Json
           payment_method?: string
           payment_status?: string
           pickup_time: number
           status?: string
-          table_number?: string | null
           total: number
         }
         Update: {
@@ -92,11 +42,11 @@ export type Database = {
           customer_name?: string
           customer_phone?: string
           id?: string
+          items?: Json
           payment_method?: string
           payment_status?: string
           pickup_time?: number
           status?: string
-          table_number?: string | null
           total?: number
         }
         Relationships: []

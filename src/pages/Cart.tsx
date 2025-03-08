@@ -9,7 +9,6 @@ import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { v4 as uuidv4 } from 'uuid';
 import { CustomerInfo, Order } from '@/types';
 import { toast } from 'sonner';
@@ -85,8 +84,6 @@ const Cart: React.FC = () => {
       
       toast.success("Order placed successfully!");
       
-      exportOrderToCSV(order);
-
       navigate('/order-confirmation', { 
         state: { 
           orderId: order.id, 
@@ -100,33 +97,6 @@ const Cart: React.FC = () => {
     } catch (error) {
       console.error("Error during checkout:", error);
       toast.error("There was a problem processing your order. Please try again.");
-    }
-  };
-
-  const exportOrderToCSV = (order: Order) => {
-    try {
-      let csvContent = "Order ID,Date,Customer Name,Discord,Phone,Pickup Time,Total\n";
-      csvContent += `${order.id},${order.date.toISOString()},${order.customerInfo.name},${order.customerInfo.discord},${order.customerInfo.phone},${order.pickupTime} minutes,RM ${order.total.toFixed(2)}\n\n`;
-      
-      csvContent += "Item,Option,Quantity,Price,Total\n";
-      order.items.forEach(item => {
-        csvContent += `${item.name},${item.selectedOption?.name || 'N/A'},${item.quantity},RM ${item.price.toFixed(2)},RM ${(item.price * item.quantity).toFixed(2)}\n`;
-      });
-      
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.setAttribute('href', url);
-      link.setAttribute('download', `order-${order.id.slice(0, 8)}.csv`);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      console.log("Order exported to CSV");
-    } catch (error) {
-      console.error("Error exporting order to CSV:", error);
-      toast.error("Failed to export order data");
     }
   };
 
