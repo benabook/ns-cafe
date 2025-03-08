@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AnimatedPage from '@/components/ui/AnimatedPage';
@@ -48,39 +47,28 @@ const Admin: React.FC = () => {
     // Fetch orders initially
     fetchOrders();
     
-    // Enable REALTIME for the orders table
-    const enableRealtimeChannel = async () => {
-      try {
-        console.log("Setting up Supabase real-time subscription");
-        
-        // Subscribe to real-time updates from Supabase
-        const channel = supabase
-          .channel('orders_changes')
-          .on('postgres_changes', { 
-            event: '*', 
-            schema: 'public', 
-            table: 'orders' 
-          }, (payload) => {
-            console.log("Real-time update received:", payload);
-            // Fetch the latest orders when any change occurs
-            fetchOrders();
-          })
-          .subscribe((status) => {
-            console.log("Supabase subscription status:", status);
-          });
-          
-        return () => {
-          console.log("Cleaning up Supabase subscription");
-          supabase.removeChannel(channel);
-        };
-      } catch (error) {
-        console.error("Error setting up real-time subscription:", error);
-      }
-    };
+    console.log("Setting up Supabase real-time subscription");
     
-    const cleanup = enableRealtimeChannel();
+    // Subscribe to real-time updates from Supabase
+    const channel = supabase
+      .channel('orders_changes')
+      .on('postgres_changes', { 
+        event: '*', 
+        schema: 'public', 
+        table: 'orders' 
+      }, (payload) => {
+        console.log("Real-time update received:", payload);
+        // Fetch the latest orders when any change occurs
+        fetchOrders();
+      })
+      .subscribe((status) => {
+        console.log("Supabase subscription status:", status);
+      });
+      
+    // Return cleanup function
     return () => {
-      if (cleanup) cleanup();
+      console.log("Cleaning up Supabase subscription");
+      supabase.removeChannel(channel);
     };
   }, []);
 

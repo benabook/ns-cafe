@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { Order, CartItem } from "@/types";
+import { Order, CartItem, PaymentStatus } from "@/types";
 
 // Save an order to Supabase
 export async function saveOrder(order: Order): Promise<{ data: any; error: any }> {
@@ -11,7 +11,7 @@ export async function saveOrder(order: Order): Promise<{ data: any; error: any }
       .insert({
         customer_name: order.customerInfo.name,
         customer_discord: order.customerInfo.discord || null,
-        customer_phone: order.customerInfo.phone,
+        customer_phone: order.customerInfo.phone || null, // Make phone optional
         items: JSON.parse(JSON.stringify(order.items)), // Convert to JSON
         pickup_time: order.pickupTime,
         total: order.total,
@@ -46,14 +46,14 @@ export async function getAllOrders(): Promise<{ data: Order[]; error: any }> {
       customerInfo: {
         name: order.customer_name,
         discord: order.customer_discord || '',
-        phone: order.customer_phone
+        phone: order.customer_phone || '' // Handle potentially null phone
       },
       items: order.items as unknown as CartItem[], // Type casting
       status: order.status as Order['status'], // Ensure correct type
       total: order.total,
       date: new Date(order.created_at),
       paymentMethod: order.payment_method as Order['paymentMethod'],
-      paymentStatus: order.payment_status as Order['paymentStatus'], // Fix this type casting
+      paymentStatus: order.payment_status as PaymentStatus, // Fix this type casting
       pickupTime: order.pickup_time,
       createdAt: order.created_at
     }));
