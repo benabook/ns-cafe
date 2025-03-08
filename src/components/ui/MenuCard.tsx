@@ -47,6 +47,7 @@ const MenuCard: React.FC<MenuCardProps> = ({ item, className }) => {
             onError={() => {
               setIsLoading(false);
               setHasError(true);
+              console.error(`Failed to load image for: ${item.name}`);
             }}
           />
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 pt-12">
