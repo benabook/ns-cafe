@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AnimatedPage from '@/components/ui/AnimatedPage';
@@ -84,7 +85,7 @@ const Cart: React.FC = () => {
       
       navigate('/order-confirmation', { 
         state: { 
-          orderId: order.id, 
+          orderId: data.id, // Use the returned ID from Supabase
           pickupTime,
           total: getCartTotal(),
           customerName: customerInfo.name

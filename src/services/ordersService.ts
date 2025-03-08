@@ -10,8 +10,8 @@ export async function saveOrder(order: Order): Promise<{ data: any; error: any }
       .from('orders')
       .insert({
         customer_name: order.customerInfo.name,
-        customer_discord: order.customerInfo.discord || null,
-        customer_phone: order.customerInfo.phone || null, // Make phone optional
+        customer_discord: order.customerInfo.discord || null, // Handle empty discord
+        customer_phone: order.customerInfo.phone || null, // Make phone truly optional
         items: JSON.parse(JSON.stringify(order.items)), // Convert to JSON
         pickup_time: order.pickupTime,
         total: order.total,

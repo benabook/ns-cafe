@@ -14,7 +14,7 @@ export type Database = {
           created_at: string
           customer_discord: string | null
           customer_name: string
-          customer_phone: string
+          customer_phone: string | null
           id: string
           items: Json
           payment_method: string
@@ -27,7 +27,7 @@ export type Database = {
           created_at?: string
           customer_discord?: string | null
           customer_name: string
-          customer_phone: string
+          customer_phone?: string | null
           id?: string
           items: Json
           payment_method?: string
@@ -40,7 +40,7 @@ export type Database = {
           created_at?: string
           customer_discord?: string | null
           customer_name?: string
-          customer_phone?: string
+          customer_phone?: string | null
           id?: string
           items?: Json
           payment_method?: string
