@@ -32,7 +32,6 @@ const Cart: React.FC = () => {
   });
   const [formErrors, setFormErrors] = useState({
     name: false,
-    phone: false,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,11 +45,10 @@ const Cart: React.FC = () => {
   const validateForm = (): boolean => {
     const errors = {
       name: !customerInfo.name.trim(),
-      phone: !customerInfo.phone.trim()
     };
     
     setFormErrors(errors);
-    return !errors.name && !errors.phone;
+    return !errors.name;
   };
 
   const handleCheckout = async () => {
@@ -241,17 +239,15 @@ const Cart: React.FC = () => {
               <div className="space-y-2">
                 <Label htmlFor="phone" className="flex items-center gap-1">
                   <Phone className="h-4 w-4" /> 
-                  Phone Number <span className="text-destructive">*</span>
+                  Phone Number
                 </Label>
                 <Input 
                   id="phone" 
                   name="phone" 
                   value={customerInfo.phone} 
                   onChange={handleInputChange}
-                  className={formErrors.phone ? "border-destructive" : ""}
-                  placeholder="Enter your phone number" 
+                  placeholder="Enter your phone number (optional)" 
                 />
-                {formErrors.phone && <p className="text-xs text-destructive">Phone number is required</p>}
               </div>
             </div>
           </div>

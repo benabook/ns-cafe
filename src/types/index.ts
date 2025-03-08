@@ -27,6 +27,7 @@ export interface CartItem {
 }
 
 export type OrderStatus = 'pending' | 'preparing' | 'ready' | 'completed' | 'cancelled';
+export type PaymentStatus = 'pending' | 'paid' | 'failed';
 
 export interface CustomerInfo {
   name: string;
@@ -43,7 +44,7 @@ export interface Order {
   tableNumber?: string;
   customerInfo: CustomerInfo;
   paymentMethod: 'crypto';
-  paymentStatus: 'pending' | 'paid' | 'failed';
+  paymentStatus: PaymentStatus;
   pickupTime: number;
   createdAt?: string; // Added for Supabase timestamp
 }

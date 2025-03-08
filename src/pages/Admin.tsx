@@ -43,24 +43,44 @@ const Admin: React.FC = () => {
     setLoading(false);
   };
 
+  // Set up real-time subscription when component mounts
   useEffect(() => {
+    // Fetch orders initially
     fetchOrders();
     
-    // Subscribe to real-time updates from Supabase
-    const ordersSubscription = supabase
-      .channel('orders_channel')
-      .on('postgres_changes', { 
-        event: '*', 
-        schema: 'public', 
-        table: 'orders' 
-      }, () => {
-        // Fetch the latest orders when any change occurs
-        fetchOrders();
-      })
-      .subscribe();
-      
+    // Enable REALTIME for the orders table
+    const enableRealtimeChannel = async () => {
+      try {
+        console.log("Setting up Supabase real-time subscription");
+        
+        // Subscribe to real-time updates from Supabase
+        const channel = supabase
+          .channel('orders_changes')
+          .on('postgres_changes', { 
+            event: '*', 
+            schema: 'public', 
+            table: 'orders' 
+          }, (payload) => {
+            console.log("Real-time update received:", payload);
+            // Fetch the latest orders when any change occurs
+            fetchOrders();
+          })
+          .subscribe((status) => {
+            console.log("Supabase subscription status:", status);
+          });
+          
+        return () => {
+          console.log("Cleaning up Supabase subscription");
+          supabase.removeChannel(channel);
+        };
+      } catch (error) {
+        console.error("Error setting up real-time subscription:", error);
+      }
+    };
+    
+    const cleanup = enableRealtimeChannel();
     return () => {
-      supabase.removeChannel(ordersSubscription);
+      if (cleanup) cleanup();
     };
   }, []);
 
