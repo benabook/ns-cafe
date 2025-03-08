@@ -1,3 +1,4 @@
+
 import { MenuItem } from '@/types';
 
 // Images will be placeholders until real images are added
@@ -191,7 +192,7 @@ export const menuItems: MenuItem[] = [
     usdPrice: 3.6,
     category: 'espresso-drinks',
     ingredients: ['Espresso', 'steamed milk', 'chocolate'],
-    image: 'https://images.unsplash.com/photo-1510215047363-ac7d704c4e7b',
+    image: 'https://images.unsplash.com/photo-1610215047363-ac7d704c4e7b?auto=format&fit=crop&w=800&q=80',
     options: [
       { id: 'iced-mocha', name: 'Iced / Cold', price: 1 },
       { id: 'extra-shot-mocha', name: 'Extra Shot', price: 4 },
@@ -248,7 +249,7 @@ export const menuItems: MenuItem[] = [
     usdPrice: 2.5,
     category: 'non-coffee',
     ingredients: ['Almond milk'],
-    image: 'https://images.unsplash.com/photo-1556881286-fc6915169721',
+    image: 'https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&w=800&q=80',
     options: [
       { id: 'iced-almond-milk', name: 'Iced / Cold', price: 1 }
     ]
@@ -260,7 +261,7 @@ export const menuItems: MenuItem[] = [
     usdPrice: 2.5,
     category: 'non-coffee',
     ingredients: ['Oat milk'],
-    image: 'https://images.unsplash.com/photo-1576186726158-458e97861c6a',
+    image: 'https://images.unsplash.com/photo-1576186726158-458e97861c6a?auto=format&fit=crop&w=800&q=80',
     options: [
       { id: 'iced-oat-milk', name: 'Iced / Cold', price: 1 }
     ]
@@ -283,7 +284,8 @@ export const menuItems: MenuItem[] = [
     usdPrice: 5.0,
     category: 'smoothies',
     ingredients: ['Peanut butter', 'banana', 'almond milk (unsweetened)', 'whey protein'],
-    image: 'https://images.unsplash.com/photo-1588929473475-beb2c59c8f92'
+    image: 'https://images.unsplash.com/photo-1588929473475-beb2c59c8f92?auto=format&fit=crop&w=800&q=80',
+    options: []
   },
   {
     id: 'mixed-berries-smoothie',
@@ -292,7 +294,8 @@ export const menuItems: MenuItem[] = [
     usdPrice: 5.0,
     category: 'smoothies',
     ingredients: ['Blueberries', 'strawberries', 'almond milk (unsweetened)', 'whey protein'],
-    image: 'https://images.unsplash.com/photo-1553530666-ba11a90fe8b7'
+    image: 'https://images.unsplash.com/photo-1553530666-ba11a90fe8b7?auto=format&fit=crop&w=800&q=80',
+    options: []
   },
   
   // Cold-Pressed Juices
@@ -312,7 +315,8 @@ export const menuItems: MenuItem[] = [
     usdPrice: 3.2,
     category: 'cold-pressed',
     ingredients: ['Celery', 'cucumber', 'ginger', 'green apple', 'spinach'],
-    image: 'https://images.unsplash.com/photo-1622597459447-7c95b700e554'
+    image: 'https://images.unsplash.com/photo-1622597459447-7c95b700e554?auto=format&fit=crop&w=800&q=80',
+    options: []
   },
   {
     id: 'immune-booster-juice',

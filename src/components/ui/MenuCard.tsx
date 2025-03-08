@@ -12,6 +12,7 @@ interface MenuCardProps {
 
 const MenuCard: React.FC<MenuCardProps> = ({ item, className }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   return (
     <motion.div 
@@ -30,14 +31,23 @@ const MenuCard: React.FC<MenuCardProps> = ({ item, className }) => {
           {isLoading && (
             <div className="absolute inset-0 bg-muted animate-pulse" />
           )}
+          {hasError && (
+            <div className="absolute inset-0 bg-muted flex items-center justify-center">
+              <span className="text-muted-foreground text-sm">Image unavailable</span>
+            </div>
+          )}
           <img
-            src={`${item.image}?auto=format&fit=crop&w=600&q=80`}
+            src={item.image}
             alt={item.name}
             className={cn(
               "w-full h-full object-cover transition-opacity duration-700",
-              isLoading ? "opacity-0" : "opacity-100"
+              (isLoading || hasError) ? "opacity-0" : "opacity-100"
             )}
             onLoad={() => setIsLoading(false)}
+            onError={() => {
+              setIsLoading(false);
+              setHasError(true);
+            }}
           />
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 pt-12">
             <div className="flex flex-col gap-1">
@@ -60,7 +70,7 @@ const MenuCard: React.FC<MenuCardProps> = ({ item, className }) => {
             {item.ingredients.join(', ')}
           </p>
           
-          {item.options && (
+          {item.options && item.options.length > 0 && (
             <div className="mt-auto">
               <span className="text-xs font-medium text-primary">
                 Customizable options available
