@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AnimatedPage from '@/components/ui/AnimatedPage';
@@ -14,6 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { v4 as uuidv4 } from 'uuid';
 import { CustomerInfo, Order } from '@/types';
 import { toast } from 'sonner';
+import { saveOrder } from '@/services/ordersService';
 
 const pickupTimes = [
   { id: 'time-10', label: '10 minutes', value: 10 },
@@ -54,7 +54,7 @@ const Cart: React.FC = () => {
     return !errors.name && !errors.phone;
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (!validateForm()) {
       toast.error("Please fill in all required fields");
       return;
@@ -74,24 +74,37 @@ const Cart: React.FC = () => {
       pickupTime
     };
 
-    // Export order to CSV
-    exportOrderToCSV(order);
+    try {
+      const { data, error } = await saveOrder(order);
+      
+      if (error) {
+        console.error("Error saving order:", error);
+        toast.error("There was a problem saving your order. Please try again.");
+        return;
+      }
+      
+      toast.success("Order placed successfully!");
+      
+      exportOrderToCSV(order);
 
-    navigate('/order-confirmation', { 
-      state: { 
-        orderId: order.id, 
-        pickupTime,
-        total: getCartTotal(),
-        customerName: customerInfo.name
-      } 
-    });
-    
-    clearCart();
+      navigate('/order-confirmation', { 
+        state: { 
+          orderId: order.id, 
+          pickupTime,
+          total: getCartTotal(),
+          customerName: customerInfo.name
+        } 
+      });
+      
+      clearCart();
+    } catch (error) {
+      console.error("Error during checkout:", error);
+      toast.error("There was a problem processing your order. Please try again.");
+    }
   };
 
   const exportOrderToCSV = (order: Order) => {
     try {
-      // Create CSV content
       let csvContent = "Order ID,Date,Customer Name,Discord,Phone,Pickup Time,Total\n";
       csvContent += `${order.id},${order.date.toISOString()},${order.customerInfo.name},${order.customerInfo.discord},${order.customerInfo.phone},${order.pickupTime} minutes,RM ${order.total.toFixed(2)}\n\n`;
       
@@ -100,7 +113,6 @@ const Cart: React.FC = () => {
         csvContent += `${item.name},${item.selectedOption?.name || 'N/A'},${item.quantity},RM ${item.price.toFixed(2)},RM ${(item.price * item.quantity).toFixed(2)}\n`;
       });
       
-      // Create blob and download link
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');

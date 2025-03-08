@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import ItemDetail from "./pages/ItemDetail";
 import Cart from "./pages/Cart";
 import OrderConfirmation from "./pages/OrderConfirmation";
+import Admin from "./pages/Admin"; // Import the Admin page
 import NotFound from "./pages/NotFound";
 import { CartProvider } from "./context/CartContext";
 
@@ -25,6 +26,7 @@ const App = () => (
             <Route path="/item/:id" element={<ItemDetail />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
+            <Route path="/admin" element={<Admin />} /> {/* Add Admin route */}
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

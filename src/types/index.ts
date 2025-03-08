@@ -45,6 +45,7 @@ export interface Order {
   paymentMethod: 'crypto';
   paymentStatus: 'pending' | 'paid' | 'failed';
   pickupTime: number;
+  createdAt?: string; // Added for Supabase timestamp
 }
 
 export interface CartContextType {
