@@ -9,11 +9,10 @@ export async function saveOrder(order: Order): Promise<{ data: any; error: any }
     const { data, error } = await supabase
       .from('orders')
       .insert({
-        id: order.id,
         customer_name: order.customerInfo.name,
         customer_discord: order.customerInfo.discord || null,
         customer_phone: order.customerInfo.phone,
-        items: order.items,
+        items: JSON.parse(JSON.stringify(order.items)), // Convert to JSON
         pickup_time: order.pickupTime,
         total: order.total,
         status: order.status,
@@ -49,8 +48,8 @@ export async function getAllOrders(): Promise<{ data: Order[]; error: any }> {
         discord: order.customer_discord || '',
         phone: order.customer_phone
       },
-      items: order.items as CartItem[],
-      status: order.status,
+      items: order.items as unknown as CartItem[], // Type casting
+      status: order.status as Order['status'], // Ensure correct type
       total: order.total,
       date: new Date(order.created_at),
       paymentMethod: order.payment_method,

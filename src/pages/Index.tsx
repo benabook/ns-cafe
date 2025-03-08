@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AnimatedPage from '@/components/ui/AnimatedPage';
 import MenuCard from '@/components/ui/MenuCard';
 import { menuItems } from '@/data/menuData';
@@ -7,8 +8,10 @@ import { MenuItem } from '@/types';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Shield } from 'lucide-react';
 
 const MenuPage: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   
   const categories = [
@@ -45,6 +48,17 @@ const MenuPage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
+            <div className="flex justify-center mb-4">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex items-center gap-1"
+                onClick={() => navigate('/login')}
+              >
+                <Shield className="h-4 w-4" />
+                Admin Login
+              </Button>
+            </div>
             <span className="bg-primary/10 text-primary text-xs font-medium px-3 py-1 rounded-full">
               NS Café Menu
             </span>

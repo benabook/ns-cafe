@@ -1,23 +1,29 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AnimatedPage from '@/components/ui/AnimatedPage';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { ArrowLeft, RefreshCw } from 'lucide-react';
+import { ArrowLeft, RefreshCw, LogOut } from 'lucide-react';
 import { getAllOrders, updateOrderStatus } from '@/services/ordersService';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Order } from '@/types';
 import AdminOrderCard from '@/components/admin/AdminOrderCard';
+import { useAuth } from '@/context/AuthContext';
 
 const Admin: React.FC = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Filter orders based on status
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
+
   const pendingOrders = orders.filter(order => order.status === 'pending');
   const preparingOrders = orders.filter(order => order.status === 'preparing');
   const readyOrders = orders.filter(order => order.status === 'ready' || order.status === 'completed');
@@ -39,7 +45,6 @@ const Admin: React.FC = () => {
   useEffect(() => {
     fetchOrders();
     
-    // Set up real-time subscription to orders table
     const ordersSubscription = supabase
       .channel('orders_channel')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
@@ -55,16 +60,13 @@ const Admin: React.FC = () => {
   const handleDragEnd = async (result: DropResult) => {
     const { source, destination, draggableId } = result;
 
-    // If dropped outside a droppable area
     if (!destination) return;
 
-    // If dropped in the same place
     if (
       source.droppableId === destination.droppableId &&
       source.index === destination.index
     ) return;
 
-    // Determine the new status based on the destination column
     let newStatus: string;
     switch (destination.droppableId) {
       case 'pending':
@@ -80,16 +82,19 @@ const Admin: React.FC = () => {
         return;
     }
 
-    // Update the order status in the database
     const { success, error } = await updateOrderStatus(draggableId, newStatus);
     
     if (success) {
       toast.success(`Order status updated to ${newStatus}`);
-      // No need to manually update state as we have real-time updates via supabase subscription
     } else {
       toast.error("Failed to update order status");
       console.error("Error updating order status:", error);
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
 
   return (
@@ -103,13 +108,22 @@ const Admin: React.FC = () => {
           >
             <ArrowLeft className="h-4 w-4" /> Back to Menu
           </Button>
-          <Button 
-            variant="outline" 
-            className="flex items-center gap-1"
-            onClick={fetchOrders}
-          >
-            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-1"
+              onClick={fetchOrders}
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
+            </Button>
+            <Button 
+              variant="destructive" 
+              className="flex items-center gap-1"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-4 w-4" /> Logout
+            </Button>
+          </div>
         </div>
 
         <div className="mb-6">
@@ -121,7 +135,6 @@ const Admin: React.FC = () => {
 
         <DragDropContext onDragEnd={handleDragEnd}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* New Orders Column */}
             <div>
               <Card>
                 <CardHeader className="bg-yellow-100 dark:bg-yellow-900/20">
@@ -168,7 +181,6 @@ const Admin: React.FC = () => {
               </Card>
             </div>
 
-            {/* Preparing Orders Column */}
             <div>
               <Card>
                 <CardHeader className="bg-blue-100 dark:bg-blue-900/20">
@@ -215,7 +227,6 @@ const Admin: React.FC = () => {
               </Card>
             </div>
 
-            {/* Ready Orders Column */}
             <div>
               <Card>
                 <CardHeader className="bg-green-100 dark:bg-green-900/20">
