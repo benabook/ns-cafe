@@ -33,6 +33,16 @@ const AdminOrderCard: React.FC<AdminOrderCardProps> = ({ order, isDragging }) =>
     }
   };
 
+  // Get appropriate badge color based on payment status
+  const getPaymentStatusBadgeColor = (status: string) => {
+    switch (status) {
+      case 'paid': return 'bg-green-500 hover:bg-green-600';
+      case 'pending': return 'bg-yellow-500 hover:bg-yellow-600';
+      case 'failed': return 'bg-red-500 hover:bg-red-600';
+      default: return 'bg-gray-500 hover:bg-gray-600';
+    }
+  };
+
   const toggleExpand = () => {
     setExpanded(!expanded);
   };
@@ -49,9 +59,12 @@ const AdminOrderCard: React.FC<AdminOrderCardProps> = ({ order, isDragging }) =>
               {order.createdAt ? formatDate(order.createdAt) : ''}
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col items-end gap-2">
             <Badge className={getStatusBadgeColor(order.status)}>
               {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+            </Badge>
+            <Badge className={getPaymentStatusBadgeColor(order.paymentStatus)}>
+              Payment: {order.paymentStatus.charAt(0).toUpperCase() + order.paymentStatus.slice(1)}
             </Badge>
             {order.status === 'delivered' && (
               <button 
