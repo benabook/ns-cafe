@@ -51,8 +51,7 @@ export async function checkLightningPayment(paymentId: string): Promise<{
 }> {
   try {
     const { data, error } = await supabase.functions.invoke('check-lightning-payment', {
-      method: 'GET',
-      query: { paymentId }
+      body: { paymentId }
     });
 
     if (error) {
@@ -75,8 +74,7 @@ export async function checkOrderPaymentStatus(orderId: string): Promise<{
 }> {
   try {
     const { data, error } = await supabase.functions.invoke('check-lightning-payment', {
-      method: 'GET',
-      query: { orderId }
+      body: { orderId }
     });
 
     if (error) {

@@ -9,6 +9,7 @@ import ItemDetail from "./pages/ItemDetail";
 import Cart from "./pages/Cart";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import PaymentConfirmation from "./pages/PaymentConfirmation";
+import StripePayment from "./pages/StripePayment";
 import Admin from "./pages/Admin";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
@@ -30,6 +31,7 @@ const App = () => (
               <Route path="/item/:id" element={<ItemDetail />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/payment-confirmation" element={<PaymentConfirmation />} />
+              <Route path="/stripe-payment" element={<StripePayment />} />
               <Route path="/order-confirmation" element={<OrderConfirmation />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/login" element={<Login />} />
