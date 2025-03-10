@@ -1,56 +1,44 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ThemeProvider } from './components/theme-provider';
-import { AuthProvider } from './context/AuthContext';
-import { CartProvider } from './context/CartContext';
-import Index from './pages/Index';
-import ItemDetail from './pages/ItemDetail';
-import Cart from './pages/Cart';
-import OrderConfirmation from './pages/OrderConfirmation';
-import NotFound from './pages/NotFound';
-import Login from './pages/Login';
-import Admin from './pages/Admin';
-import ProtectedRoute from './components/ProtectedRoute';
-import Layout from './components/Layout';
-import { Toaster } from '@/components/ui/sonner';
-import PaymentConfirmation from './pages/PaymentConfirmation';
 
-function App() {
-  const queryClient = new QueryClient();
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Index from "./pages/Index";
+import ItemDetail from "./pages/ItemDetail";
+import Cart from "./pages/Cart";
+import OrderConfirmation from "./pages/OrderConfirmation";
+import Admin from "./pages/Admin";
+import Login from "./pages/Login";
+import NotFound from "./pages/NotFound";
+import { CartProvider } from "./context/CartContext";
+import { AuthProvider } from "./context/AuthContext";
 
-  return (
-    <AuthProvider>
+const queryClient = new QueryClient();
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
       <CartProvider>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          <QueryClientProvider client={queryClient}>
-            <Router>
-              <Layout>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/item/:id" element={<ItemDetail />} />
-                  <Route path="/cart" element={<Cart />} />
-                  <Route path="/payment-confirmation" element={<PaymentConfirmation />} />
-                  <Route path="/order-confirmation" element={<OrderConfirmation />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route 
-                    path="/admin" 
-                    element={
-                      <ProtectedRoute>
-                        <Admin />
-                      </ProtectedRoute>
-                    } 
-                  />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Layout>
-            </Router>
-            <Toaster />
-          </QueryClientProvider>
-        </ThemeProvider>
+        <AuthProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/item/:id" element={<ItemDetail />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/order-confirmation" element={<OrderConfirmation />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/login" element={<Login />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
       </CartProvider>
-    </AuthProvider>
-  );
-}
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;

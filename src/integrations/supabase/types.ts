@@ -17,8 +17,6 @@ export type Database = {
           customer_phone: string | null
           id: string
           items: Json
-          lightning_invoice: string | null
-          lightning_payment_id: string | null
           payment_method: string
           payment_status: string
           pickup_time: number
@@ -32,8 +30,6 @@ export type Database = {
           customer_phone?: string | null
           id?: string
           items: Json
-          lightning_invoice?: string | null
-          lightning_payment_id?: string | null
           payment_method?: string
           payment_status?: string
           pickup_time: number
@@ -47,8 +43,6 @@ export type Database = {
           customer_phone?: string | null
           id?: string
           items?: Json
-          lightning_invoice?: string | null
-          lightning_payment_id?: string | null
           payment_method?: string
           payment_status?: string
           pickup_time?: number

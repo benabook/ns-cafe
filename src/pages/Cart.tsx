@@ -81,12 +81,12 @@ const Cart: React.FC = () => {
         return;
       }
       
-      toast.success("Order saved! Proceeding to payment...");
+      toast.success("Order placed successfully!");
       
-      // Redirect to payment page instead of order confirmation
-      navigate('/payment-confirmation', { 
+      navigate('/order-confirmation', { 
         state: { 
-          orderId: data.id,
+          orderId: data.id, // Use the returned ID from Supabase
+          pickupTime,
           total: getCartTotal(),
           customerName: customerInfo.name
         } 
@@ -296,7 +296,7 @@ const Cart: React.FC = () => {
               onClick={handleCheckout}
               disabled={cart.length === 0}
             >
-              Proceed to Payment
+              Checkout
             </Button>
           </div>
         </div>
